@@ -1,5 +1,15 @@
-%load data file in which you downloaded from the shell script
-funcFile = '/Users/jacksonwalters/Documents/GitHub/ds000114-1.0.2/sub-01/ses-retest/func/sub-01_ses-retest_task-fingerfootlips_bold.nii';
+% === Set base path and data folder ===
+github_local_path = '/Users/jacksonwalters/Documents/GitHub/'; % local path for GitHub
+matlab_local_path = '/Users/jacksonwalters/Documents/MATLAB/'; % local path for MATLAB
+dataFolder = 'ds000114-1.0.2';                          % or 'neuroimage-analysis'
+
+% Concatenate into the full path
+fullDataPath = fullfile(github_local_path, dataFolder);
+
+% Now build your file paths
+funcFile = fullfile(fullDataPath, 'sub-01', 'ses-retest', 'func', 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
+anatFile = fullfile(fullDataPath, 'sub-01', 'ses-retest', 'anat', 'sub-01_ses-retest_T1w.nii');
+
 
 %use niftiread to read in the 4d data
 funcData = niftiread(funcFile);  % 4D array
@@ -17,8 +27,9 @@ title(sprintf('Slice %d @ timepoint %d', slice, tp));
 
 %loop through the timepoints to make a quick animation
 slice = 20;
-gif_save_path = '/Users/jacksonwalters/Documents/MATLAB/'
-gifFile = fullfile(gif_save_path,'fmri_animation.gif');  % save in current folder
+
+gif_save_path = fullfile(github_local_path, dataFolder);
+gifFile = fullfile(gif_save_path,'fmri_animation.gif');  % save in GitHub folder
 
 for tp = 1:size(funcData,4)
     imagesc(funcData(:,:,slice,tp));
@@ -55,7 +66,7 @@ xlabel('Timepoint'); ylabel('Signal');
 title(sprintf('Voxel (%d,%d,%d)',x,y,z));
 
 %working with anatomical data
-anatFile = '/Users/jacksonwalters/Documents/GitHub/ds000114-1.0.2/sub-01/ses-retest/anat/sub-01_ses-retest_T1w.nii';
+%anatFile = '/Users/jacksonwalters/Documents/GitHub/ds000114-1.0.2/sub-01/ses-retest/anat/sub-01_ses-retest_T1w.nii';
 anatData = niftiread(anatFile);
 figure;
 imagesc(anatData(:,:,slice));
