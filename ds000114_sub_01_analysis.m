@@ -24,18 +24,17 @@ funcInfo = niftiinfo(funcFile);  % metadata struct
 size(funcData)
 
 %grab a slice and display it
-slice = 20; tp = 10;
+slice = 20; time_point = 100;
 figure;
-imagesc(funcData(:,:,slice,tp));
+imagesc(funcData(:,:,slice,time_point));
 axis image off; colormap gray;
 title(sprintf('Slice %d @ timepoint %d', slice, tp));
 
 %loop through the timepoints to make a quick animation
-slice = 20;
-
 gifFile = fullfile(github_local_path,github_repository_path,'fmri_animation.gif');  % save in GitHub folder
 
-for tp = 1:size(funcData,4)
+slice = 20;
+for tp = 1:size(funcData,4) %the fourth axis is the time axis
     imagesc(funcData(:,:,slice,tp));
     axis image off; colormap gray;
     title(sprintf('Timepoint %d', tp));
