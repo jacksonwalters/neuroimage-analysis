@@ -11,8 +11,9 @@ analysis of brain scans in MATLAB
 - https://openneuro.org
 
 **brain imaging methods**:
-- DTI [diffuse tensor imaging]
+- DTI [diffuse tensor imaging, https://www.diffusion-imaging.com/2013/01/relation-between-neural-microstructure.html?m=1]
 - MRA [magnetic resonance angiography]
 
 **potential future topics**:
 - multi-modal studies [combining different data types; genetic, questionaire data, GWAS etc.]
+- neurodegenerative bases for disorders such as bipolar, schizophrenia [e.g. myelin sheath decay]
