@@ -11,7 +11,7 @@ analysis of brain scans in MATLAB
 - https://openneuro.org
 
 **brain imaging methods**:
-- DTI [diffuse tensor imaging, https://www.diffusion-imaging.com/2013/01/relation-between-neural-microstructure.html?m=1]
+- DTI [diffuse tensor imaging, https://www.diffusion-imaging.com/]
 - MRA [magnetic resonance angiography]
 
 **potential future topics**:
