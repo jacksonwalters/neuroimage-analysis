@@ -1,0 +1,16 @@
+%load data file in which you downloaded from the shell script
+funcFile = '/Users/jacksonwalters/Documents/GitHub/ds000114-1.0.2/sub-01/ses-retest/func/sub-01_ses-retest_task-fingerfootlips_bold.nii';
+
+%use niftiread to read in the 4d data
+funcData = niftiread(funcFile);  % 4D array
+funcInfo = niftiinfo(funcFile);  % metadata struct
+
+%print the dimensions of the 4d array
+size(funcData)
+
+%
+slice = 20; tp = 10;
+figure;
+imagesc(funcData(:,:,slice,tp));
+axis image off; colormap gray;
+title(sprintf('Slice %d @ timepoint %d', slice, tp));
