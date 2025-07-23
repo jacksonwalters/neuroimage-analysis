@@ -1,15 +1,20 @@
 % === Set base path and data folder ===
 github_local_path = '/Users/jacksonwalters/Documents/GitHub/'; % local path for GitHub
 matlab_local_path = '/Users/jacksonwalters/Documents/MATLAB/'; % local path for MATLAB
-dataFolder = 'ds000114-1.0.2';                          % or 'neuroimage-analysis'
+github_repository_path = 'neuroimage-analysis'; %github repository name
+dataFolder = 'ds000114-1.0.2'; %from the shell script
 
 % Concatenate into the full path
 fullDataPath = fullfile(github_local_path, dataFolder);
+local_data_path = fullfile(github_local_path,github_repository_path,'data'); %optional: full local data path
 
-% Now build your file paths
-funcFile = fullfile(fullDataPath, 'sub-01', 'ses-retest', 'func', 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
-anatFile = fullfile(fullDataPath, 'sub-01', 'ses-retest', 'anat', 'sub-01_ses-retest_T1w.nii');
+%option 1: build file path using the data downloaded from the shell script
+%funcFile = fullfile(fullDataPath, 'sub-01', 'ses-retest', 'func', 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
+%anatFile = fullfile(fullDataPath, 'sub-01', 'ses-retest', 'anat', 'sub-01_ses-retest_T1w.nii');
 
+%option 2: load test data from local files
+funcFile = fullfile(local_data_path, 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
+anatFile = fullfile(local_data_path, 'sub-01_ses-retest_T1w.nii');
 
 %use niftiread to read in the 4d data
 funcData = niftiread(funcFile);  % 4D array
@@ -28,8 +33,7 @@ title(sprintf('Slice %d @ timepoint %d', slice, tp));
 %loop through the timepoints to make a quick animation
 slice = 20;
 
-gif_save_path = fullfile(github_local_path, dataFolder);
-gifFile = fullfile(gif_save_path,'fmri_animation.gif');  % save in GitHub folder
+gifFile = fullfile(github_local_path,github_repository_path,'fmri_animation.gif');  % save in GitHub folder
 
 for tp = 1:size(funcData,4)
     imagesc(funcData(:,:,slice,tp));
