@@ -17,12 +17,28 @@ title(sprintf('Slice %d @ timepoint %d', slice, tp));
 
 %loop through the timepoints to make a quick animation
 slice = 20;
+gif_save_path = '/Users/jacksonwalters/Documents/MATLAB/'
+gifFile = fullfile(gif_save_path,'fmri_animation.gif');  % save in current folder
+
 for tp = 1:size(funcData,4)
     imagesc(funcData(:,:,slice,tp));
     axis image off; colormap gray;
     title(sprintf('Timepoint %d', tp));
-    pause(0.05); % adjust speed
+    drawnow;
+
+    % Capture the current frame
+    frame = getframe(gcf);
+    im = frame2im(frame);
+    [A,map] = rgb2ind(im,256);
+
+    if tp == 1
+        imwrite(A,map,gifFile,'gif','LoopCount',Inf,'DelayTime',0.05);
+    else
+        imwrite(A,map,gifFile,'gif','WriteMode','append','DelayTime',0.05);
+    end
 end
+
+fprintf('✅ GIF saved as: %s\n', gifFile);
 
 %compute simple statistics
 meanVol = mean(funcData, 4);
