@@ -28,10 +28,11 @@ slice = 20; time_point = 100;
 figure;
 imagesc(funcData(:,:,slice,time_point));
 axis image off; colormap gray;
-title(sprintf('Slice %d @ timepoint %d', slice, tp));
+title(sprintf('Slice %d @ timepoint %d', slice, time_point));
 
-%loop through the timepoints to make a quick animation
-gifFile = fullfile(github_local_path,github_repository_path,'fmri_animation.gif');  % save in GitHub folder
+% === Loop through time slices to create and save an animation at a fixed spatial slice ===
+gifFile = fullfile(github_local_path,github_repository_path,'fmri_time_animation.gif');  % save in GitHub folder
+figure;  % open new figure for time animation
 
 slice = 20;
 for tp = 1:size(funcData,4) %the fourth axis is the time axis
@@ -54,6 +55,33 @@ end
 
 fprintf('✅ GIF saved as: %s\n', gifFile);
 
+% === Loop through spatial slices to create and save an animation at a fixed timepoint ===
+spatial_animation_gif_file = fullfile(github_local_path, github_repository_path, 'fmri_spatial_animation.gif');  % save in GitHub folder
+figure;  % open new figure for spatial animation
+
+tp = 100; % fix timepoint
+for slice = 1:size(funcData,3)
+    % show the slice
+    imagesc(funcData(:,:,slice,tp));
+    axis image off; colormap gray;
+    title(sprintf('Slice %d', slice));
+    drawnow;
+    
+    % capture frame from figure
+    frame = getframe(gcf);
+    im = frame2im(frame);
+    [A,map] = rgb2ind(im,256);
+
+    % write to GIF
+    if slice == 1
+        imwrite(A,map,spatial_animation_gif_file,'gif','LoopCount',Inf,'DelayTime',0.05);
+    else
+        imwrite(A,map,spatial_animation_gif_file,'gif','WriteMode','append','DelayTime',0.05);
+    end
+end
+
+fprintf('✅ GIF saved as: %s\n', spatial_animation_gif_file);
+
 %compute simple statistics
 meanVol = mean(funcData, 4);
 figure;
@@ -75,3 +103,5 @@ figure;
 imagesc(anatData(:,:,slice));
 axis image off; colormap gray;
 title('Anatomical T1');
+
+
