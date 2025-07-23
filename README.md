@@ -1,5 +1,11 @@
 # neuroimage-analysis
-analysis of brain scans in MATLAB
+This script provides a basic visualization of brain scans in MATLAB.
+
+Currently it computes basic statistics and produces two animations.
+
+The first animation fixes the spatial slice in the z-axis and iterates over time. The output is a .gif file.
+
+The second animation moves through the 2d slices in the z-axis to create a spatial animation. The output is a .gif file.
 
 **current data**: https://openneuro.org/datasets/ds000114/versions/1.0.2
 
