@@ -5,15 +5,15 @@ github_repository_name = 'neuroimage-analysis'; %github repository name
 data_folder = 'ds000114-1.0.2'; %from the shell script
 sample_data_folder = 'data';
 
-%option 1: build file path pointing to data downloaded from the shell script
-full_data_path = fullfile(github_local_path, github_repository_name, data_folder);
-%funcFile = fullfile(full_data_path, 'sub-01', 'ses-retest', 'func', 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
-%anatFile = fullfile(full_data_path, 'sub-01', 'ses-retest', 'anat', 'sub-01_ses-retest_T1w.nii');
-
-%option 2: load test data from data directory inside github repository
+%option 1: load sample data from data directory inside github repository
 local_data_path = fullfile(github_local_path,github_repository_name,sample_data_folder); %optional: full local data path
 funcFile = fullfile(local_data_path, 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
 anatFile = fullfile(local_data_path, 'sub-01_ses-retest_T1w.nii');
+
+%option 2: build file path pointing to full dataset downloaded from the shell script
+full_data_path = fullfile(github_local_path, github_repository_name, data_folder);
+%funcFile = fullfile(full_data_path, 'sub-01', 'ses-retest', 'func', 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
+%anatFile = fullfile(full_data_path, 'sub-01', 'ses-retest', 'anat', 'sub-01_ses-retest_T1w.nii');
 
 %use niftiread to read in the 4d functional data
 funcData = niftiread(funcFile);  % 4D array

@@ -1,16 +1,17 @@
 % === Set base path and data folder ===
 github_local_path = '/Users/jacksonwalters/Documents/GitHub/'; % local path for GitHub
 matlab_local_path = '/Users/jacksonwalters/Documents/MATLAB/'; % local path for MATLAB
-github_repository_path = 'neuroimage-analysis'; %github repository name
-dataFolder = 'ds000114-1.0.2'; %from the shell script
+github_repository_name = 'neuroimage-analysis'; %github repository name
+data_folder = 'ds000114-1.0.2'; %from the shell script
+sample_data_folder = 'data';
 
 %option 1: build file path pointing to data downloaded from the shell script
-full_data_path = fullfile(github_local_path, dataFolder);
+full_data_path = fullfile(github_local_path, github_repository_name, data_folder);
 %funcFile = fullfile(full_data_path, 'sub-01', 'ses-retest', 'func', 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
 %anatFile = fullfile(full_data_path, 'sub-01', 'ses-retest', 'anat', 'sub-01_ses-retest_T1w.nii');
 
-%option 2: load test data from data directory inside github repository
-local_data_path = fullfile(github_local_path,github_repository_path,'data'); %optional: full local data path
+%option 2: load sam data from data directory inside github repository
+local_data_path = fullfile(github_local_path,github_repository_name,sample_data_folder); %optional: full local data path
 funcFile = fullfile(local_data_path, 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
 anatFile = fullfile(local_data_path, 'sub-01_ses-retest_T1w.nii');
 
@@ -94,22 +95,22 @@ function animateOverSlices(volume3Dor4D, timePoint, gifFile, delayTime)
 end
 
 % Animate over time (for fMRI)
-gif_time = fullfile(github_local_path, github_repository_path, 'fmri_time_animation.gif');
+gif_time = fullfile(github_local_path, github_repository_path, 'animations/fmri_time_animation.gif');
 animateOverTime(funcData, 20, gif_time, 0.05);
 
 % Animate over slices (for fMRI at timepoint 100)
-gif_spatial = fullfile(github_local_path, github_repository_path, 'fmri_spatial_animation.gif');
+gif_spatial = fullfile(github_local_path, github_repository_path, 'animations/fmri_spatial_animation.gif');
 animateOverSlices(funcData, 100, gif_spatial, 0.05);
 
-% create an image of a slice working with anatomical data;
+% Animate over slices (for anatomical data)
+gif_anat = fullfile(github_local_path, github_repository_path, 'animations/anat_spatial_animation.gif');
+animateOverSlices(anatData, 1, gif_anat, 0.05);  % anatData is 3D, timePoint ignored
+
+% create an image of a slice of anatomical data;
 figure;
 imagesc(anatData(:,:,slice));
 axis image off; colormap gray;
 title('Anatomical T1');
-
-% Animate over slices (for anatomical data)
-gif_anat = fullfile(github_local_path, github_repository_path, 'anat_spatial_animation.gif');
-animateOverSlices(anatData, 1, gif_anat, 0.05);  % anatData is 3D, timePoint ignored
 
 %compute simple statistics
 meanVol = mean(funcData, 4);
