@@ -137,3 +137,15 @@ subplot(2,2,2); imagesc(ADmap'); axis image off; colormap jet; colorbar; title('
 subplot(2,2,3); imagesc(RDmap'); axis image off; colormap jet; colorbar; title('RD');
 subplot(2,2,4); imagesc(MDmap'); axis image off; colormap jet; colorbar; title('MD');
 sgtitle(sprintf('DTI metrics at slice %d', z));
+
+%=== save the maps as PNG or TIFF ===
+
+f = figure;
+subplot(2,2,1); imagesc(FAmap'); axis image off; colormap jet; colorbar; title('FA');
+subplot(2,2,2); imagesc(ADmap'); axis image off; colormap jet; colorbar; title('AD');
+subplot(2,2,3); imagesc(RDmap'); axis image off; colormap jet; colorbar; title('RD');
+subplot(2,2,4); imagesc(MDmap'); axis image off; colormap jet; colorbar; title('MD');
+sgtitle(sprintf('DTI metrics at slice %d', z));
+
+saveas(f, fullfile(github_local_path, github_repository_name, 'figures', 'DTI_maps.png'));
+%exportgraphics(f, fullfile(github_local_path, github_repository_name, 'DTI_maps.png'), 'Resolution',300);
