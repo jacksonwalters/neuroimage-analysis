@@ -35,8 +35,11 @@ end
 
 dwiInfo % show the whole struct
 
-bvalFile = fullfile(github_local_path, data_folder, 'dwi.bval');
-bvecFile = fullfile(github_local_path, data_folder, 'dwi.bvec');
+bvalFile = fullfile(github_local_path, github_repository_name, data_folder, 'dwi.bval');
+bvecFile = fullfile(github_local_path, github_repository_name, data_folder, 'dwi.bvec');
 
 bvals = dlmread(bvalFile);   % 1 x N
 bvecs = dlmread(bvecFile);   % 3 x N
+
+size(bvals)   % expect [1 71]
+size(bvecs)   % expect [3 71]
