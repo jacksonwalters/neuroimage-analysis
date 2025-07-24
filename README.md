@@ -5,11 +5,17 @@ This script provides a basic visualization of brain scans in MATLAB.
 
 **paper**: https://pmc.ncbi.nlm.nih.gov/articles/PMC3641991/pdf/2047-217X-2-6.pdf
 
-**downloading the data**: Use the shell script `ds000114-1.0.2.sh` which includes `curl` commands. Be sure to make it executable.
+**downloading the data**: Use the shell script `ds000114-1.0.2.sh` which includes `curl` commands. Change the permissions to make it executable.
 
-`chmod +x ds000114-1.0.2.sh`
+`
+chmod +x ds000114-1.0.2.sh
+`
 
-This will download the dataset which may take a few minutes. Any directory can be used, but be sure to set the path to the data files.
+Then run 
+
+`./ds000114-1.0.2.sh`
+
+to download the dataset which may take a few minutes. Any directory can be used, but be sure to set the path to the data files.
 
 Currently the `ds000114_sub_01_analysis.m` script:
   - computes basic statistics
