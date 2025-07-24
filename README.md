@@ -1,7 +1,10 @@
 # neuroimage-analysis
 This script provides a basic visualization of brain scans in MATLAB.
 
-Currently it computes basic statistics and produces two animations.
+Currently the `ds000114_sub_01_analysis.m` script:
+  - computes basic statistics
+  - produces two animations [temporal, spatial]
+  - outputs a time series for a given voxel
 
 The first animation fixes the spatial slice in the z-axis and iterates over time. The output is a .gif file.
 
