@@ -3,7 +3,7 @@ github_local_path = '/Users/jacksonwalters/Documents/GitHub/'; % local path for 
 matlab_local_path = '/Users/jacksonwalters/Documents/MATLAB/'; % local path for MATLAB
 github_repository_name = 'neuroimage-analysis'; %github repository name
 data_folder = 'ds000114-1.0.2'; %from the shell script
-sample_data_folder = 'data';
+sample_data_folder = 'sample_data';
 
 %option 1: load sample data from data directory inside github repository
 local_data_path = fullfile(github_local_path,github_repository_name,sample_data_folder); %optional: full local data path
