@@ -26,7 +26,7 @@ Currently the `ds000114_sub_01_analysis.m` script:
 **paths**: There are two paths depending on whether you'd like to use some sample data, or point to the full dataset.
 
 - local test data path in repository: `'/Users/jacksonwalters/Documents/GitHub/neuroimage-analysis/data'`
-- data downloaded from shell script: `'/Users/jacksonwalters/Documents/GitHub/ds000114-1.0.2'`
+- data downloaded from shell script: `'/Users/jacksonwalters/Documents/GitHub/neuroimage-analysis/ds000114-1.0.2'`
 
 **datasets:**
 - https://community.ukbiobank.ac.uk/hc/en-gb/articles/24618819821981-Imaging-Data
