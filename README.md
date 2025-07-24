@@ -19,8 +19,8 @@ to download the dataset which may take a few minutes. Any directory can be used,
 
 Currently the `ds000114_sub_01_analysis.m` script:
   - loads both functional (func) and anatomical data (anat)
-  - computes basic statistics
   - produces three animations as .gif files [temporal functional, spatial functional, spatial anatomical]
+  - computes basic statistics
   - outputs a time series for a given voxel
 
 **paths**: There are two paths depending on whether you'd like to use some sample data, or point to the full dataset.
