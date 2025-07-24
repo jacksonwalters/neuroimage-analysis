@@ -125,3 +125,8 @@ voxelTS = squeeze(funcData(x,y,z,:));
 plot(voxelTS);
 xlabel('Timepoint'); ylabel('Signal');
 title(sprintf('Voxel (%d,%d,%d)',x,y,z));
+
+%begin diffusion tensor imaging computation [AD, RD, MD, FA]
+dwiFile = fullfile(github_local_path, github_repository_path, 'sample_data', 'sub-01_ses-retest_dwi.nii');
+dwiData = niftiread(dwiFile);    % size: X x Y x Z x Nvols
+dwiInfo = niftiinfo(dwiFile);
