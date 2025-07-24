@@ -40,3 +40,6 @@ Currently the `ds000114_sub_01_analysis.m` script:
 **future topics**:
 - multi-modal studies [combining different data types; genetic, questionaire data, GWAS etc.]
 - neurodegenerative bases for disorders such as bipolar, schizophrenia [e.g. myelin sheath decay]
+
+**articles**:
+- https://www.diffusion-imaging.com/2013/01/relation-between-neural-microstructure.html
