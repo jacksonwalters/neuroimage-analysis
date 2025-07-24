@@ -39,8 +39,13 @@ Currently the `ds000114_sub_01_analysis.m` script:
 
 **future topics**:
 - multi-modal studies [combining different data types; genetic, questionaire data, GWAS etc.]
-- neurodegenerative bases for disorders such as bipolar, schizophrenia [e.g. myelin sheath decay]
+- neurodegenerative bases for disorders such as bipolar, schizophrenia [e.g. myelination]
 
 **articles**:
+- https://www.diffusion-imaging.com/2015/10/what-is-diffusion-tensor.html
 - https://www.diffusion-imaging.com/2013/01/relation-between-neural-microstructure.html
 - https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2013.00031/full
+
+**to-do**:
+- compute four DTI values [AD, RD, MD, FA] for fixed 4d tensor in `ds000114-1.0.2`
+- display resulting 2d images
