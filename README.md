@@ -43,3 +43,4 @@ Currently the `ds000114_sub_01_analysis.m` script:
 
 **articles**:
 - https://www.diffusion-imaging.com/2013/01/relation-between-neural-microstructure.html
+- https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2013.00031/full
