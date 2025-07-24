@@ -1,0 +1,105 @@
+% === Set base path and data folder ===
+github_local_path = '/Users/jacksonwalters/Documents/GitHub/'; % local path for GitHub
+matlab_local_path = '/Users/jacksonwalters/Documents/MATLAB/'; % local path for MATLAB
+github_repository_path = 'neuroimage-analysis'; %github repository name
+dataFolder = 'ds000114-1.0.2'; %from the shell script
+
+%option 1: build file path using the data downloaded from the shell script
+full_data_path = fullfile(github_local_path, dataFolder);
+%funcFile = fullfile(full_data_path, 'sub-01', 'ses-retest', 'func', 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
+%anatFile = fullfile(full_data_path, 'sub-01', 'ses-retest', 'anat', 'sub-01_ses-retest_T1w.nii');
+
+%option 2: load test data from data directory inside repository
+local_data_path = fullfile(github_local_path,github_repository_path,'data'); %optional: full local data path
+funcFile = fullfile(local_data_path, 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
+anatFile = fullfile(local_data_path, 'sub-01_ses-retest_T1w.nii');
+
+%use niftiread to read in the 4d data
+funcData = niftiread(funcFile);  % 4D array
+funcInfo = niftiinfo(funcFile);  % metadata struct
+
+%print the dimensions of the 4d array
+size(funcData)
+
+%grab a slice and display it
+slice = 20; time_point = 100;
+figure;
+imagesc(funcData(:,:,slice,time_point));
+axis image off; colormap gray;
+title(sprintf('Slice %d @ timepoint %d', slice, time_point));
+
+% === Loop through time slices to create and save an animation at a fixed spatial slice ===
+gifFile = fullfile(github_local_path,github_repository_path,'fmri_time_animation.gif');  % save in GitHub folder
+figure;  % open new figure for time animation
+
+slice = 20;
+for tp = 1:size(funcData,4) %the fourth axis is the time axis
+    imagesc(funcData(:,:,slice,tp));
+    axis image off; colormap gray;
+    title(sprintf('Timepoint %d', tp));
+    drawnow;
+
+    % Capture the current frame
+    frame = getframe(gcf);
+    im = frame2im(frame);
+    [A,map] = rgb2ind(im,256);
+
+    if tp == 1
+        imwrite(A,map,gifFile,'gif','LoopCount',Inf,'DelayTime',0.05);
+    else
+        imwrite(A,map,gifFile,'gif','WriteMode','append','DelayTime',0.05);
+    end
+end
+
+fprintf('✅ GIF saved as: %s\n', gifFile);
+
+% === Loop through spatial slices to create and save an animation at a fixed timepoint ===
+spatial_animation_gif_file = fullfile(github_local_path, github_repository_path, 'fmri_spatial_animation.gif');  % save in GitHub folder
+figure;  % open new figure for spatial animation
+
+tp = 100; % fix timepoint
+for slice = 1:size(funcData,3)
+    % show the slice
+    imagesc(funcData(:,:,slice,tp));
+    axis image off; colormap gray;
+    title(sprintf('Slice %d', slice));
+    drawnow;
+    
+    % capture frame from figure
+    frame = getframe(gcf);
+    im = frame2im(frame);
+    [A,map] = rgb2ind(im,256);
+
+    % write to GIF
+    if slice == 1
+        imwrite(A,map,spatial_animation_gif_file,'gif','LoopCount',Inf,'DelayTime',0.05);
+    else
+        imwrite(A,map,spatial_animation_gif_file,'gif','WriteMode','append','DelayTime',0.05);
+    end
+end
+
+fprintf('✅ GIF saved as: %s\n', spatial_animation_gif_file);
+
+%compute simple statistics
+meanVol = mean(funcData, 4);
+figure;
+imagesc(meanVol(:,:,slice));
+axis image off; colormap gray;
+title('Mean signal over time');
+
+%extract a time series from a voxel
+x = 32; y = 32; z = 18;
+voxelTS = squeeze(funcData(x,y,z,:));
+plot(voxelTS);
+xlabel('Timepoint'); ylabel('Signal');
+title(sprintf('Voxel (%d,%d,%d)',x,y,z));
+
+%working with anatomical data
+%anatFile = '/Users/jacksonwalters/Documents/GitHub/ds000114-1.0.2/sub-01/ses-retest/anat/sub-01_ses-retest_T1w.nii';
+anatData = niftiread(anatFile);
+figure;
+imagesc(anatData(:,:,slice));
+axis image off; colormap gray;
+title('Anatomical T1');
+
+

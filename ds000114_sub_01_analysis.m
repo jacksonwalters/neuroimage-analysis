@@ -4,15 +4,13 @@ matlab_local_path = '/Users/jacksonwalters/Documents/MATLAB/'; % local path for 
 github_repository_path = 'neuroimage-analysis'; %github repository name
 dataFolder = 'ds000114-1.0.2'; %from the shell script
 
-% Concatenate into the full path
-fullDataPath = fullfile(github_local_path, dataFolder);
+%option 1: build file path pointing to data downloaded from the shell script
+full_data_path = fullfile(github_local_path, dataFolder);
+%funcFile = fullfile(full_data_path, 'sub-01', 'ses-retest', 'func', 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
+%anatFile = fullfile(full_data_path, 'sub-01', 'ses-retest', 'anat', 'sub-01_ses-retest_T1w.nii');
+
+%option 2: load test data from data directory inside repository
 local_data_path = fullfile(github_local_path,github_repository_path,'data'); %optional: full local data path
-
-%option 1: build file path using the data downloaded from the shell script
-%funcFile = fullfile(fullDataPath, 'sub-01', 'ses-retest', 'func', 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
-%anatFile = fullfile(fullDataPath, 'sub-01', 'ses-retest', 'anat', 'sub-01_ses-retest_T1w.nii');
-
-%option 2: load test data from local files
 funcFile = fullfile(local_data_path, 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
 anatFile = fullfile(local_data_path, 'sub-01_ses-retest_T1w.nii');
 
