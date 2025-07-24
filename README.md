@@ -1,7 +1,7 @@
 # neuroimage-analysis
-This script provides basic visualizations of fMRI [functional magnetic resonance imaging] data in MATLAB, as well as basic DTI [diffusion tensor imaging]. 
+This script provides visualizations of brain scan data in MATLAB. This is joint work with Oriana Myers.
 
-This is joint work with Oriana Myers.
+We analyze both fMRI [functional magnetic resonance imaging] data and utilize DTI [diffusion tensor imaging] methods.
 
 **current dataset**: https://openneuro.org/datasets/ds000114/versions/1.0.2
 
