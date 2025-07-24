@@ -6,7 +6,7 @@ Currently the `ds000114_sub_01_analysis.m` script:
   - produces two animations [temporal, spatial] as .gif files
   - outputs a time series for a given voxel
 
-**current data**: https://openneuro.org/datasets/ds000114/versions/1.0.2
+**current dataset**: https://openneuro.org/datasets/ds000114/versions/1.0.2
 
 **paper**: https://pmc.ncbi.nlm.nih.gov/articles/PMC3641991/pdf/2047-217X-2-6.pdf
 
