@@ -1,5 +1,5 @@
 # neuroimage-analysis
-This script provides basic visualizations of fMRI brain scans in MATLAB.
+This script provides basic visualizations of fMRI brain scans in MATLAB. This is joint work with Oriana Meyer.
 
 **current dataset**: https://openneuro.org/datasets/ds000114/versions/1.0.2
 
