@@ -9,9 +9,7 @@ We analyze both fMRI [functional magnetic resonance imaging] data and utilize DT
 
 **downloading the data**: Use the shell script `ds000114-1.0.2.sh` which includes `curl` commands. Change the permissions to make it executable:
 
-`
-chmod +x ds000114-1.0.2.sh
-`
+`chmod +x ds000114-1.0.2.sh`
 
 Then run 
 
@@ -19,15 +17,22 @@ Then run
 
 to download the dataset which may take a few minutes.
 
-Currently the `ds000114_sub_01_analysis.m` script:
+**fMRI animations**: 
+  - script = `ds000114_sub_01_analysis.m`
   - loads both functional (func) and anatomical data (anat)
   - produces three animations as .gif files [temporal functional, spatial functional, spatial anatomical]
   - computes basic statistics
   - outputs a time series for a given voxel
 
+**DTI visualizations**: 
+- script = `ds000114_sub_01_dti_examples.m`
+- computes four DTI values [AD, RD, MD, FA] for fixed voxel in `ds000114-1.0.2`
+- computes [AD, RD, MD, FA] for across slices
+- displays and saves resulting 2d images
+
 **paths**: There are two paths depending on whether you'd like to use some sample data, or point to the full dataset.
 
-- local test data path in repository: `'/Users/jacksonwalters/Documents/GitHub/neuroimage-analysis/data'`
+- local test data path in repository: `'/Users/jacksonwalters/Documents/GitHub/neuroimage-analysis/sample_data'`
 - data downloaded from shell script: `'/Users/jacksonwalters/Documents/GitHub/neuroimage-analysis/ds000114-1.0.2'`
 
 **datasets:**
@@ -47,7 +52,3 @@ Currently the `ds000114_sub_01_analysis.m` script:
 - https://www.diffusion-imaging.com/2015/10/what-is-diffusion-tensor.html
 - https://www.diffusion-imaging.com/2013/01/relation-between-neural-microstructure.html
 - https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2013.00031/full
-
-**to-do**:
-- compute four DTI values [AD, RD, MD, FA] for fixed 4d tensor in `ds000114-1.0.2`
-- display resulting 2d images
