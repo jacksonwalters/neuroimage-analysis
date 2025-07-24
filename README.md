@@ -1,5 +1,5 @@
 # neuroimage-analysis
-This script provides a basic visualization of brain scans in MATLAB.
+This script provides a basic visualization of fMRI brain scans in MATLAB.
 
 **current dataset**: https://openneuro.org/datasets/ds000114/versions/1.0.2
 
@@ -33,10 +33,10 @@ Currently the `ds000114_sub_01_analysis.m` script:
 - https://www.humanconnectome.org/study/hcp-young-adult
 - https://openneuro.org
 
-**brain imaging methods**:
+**future brain imaging methods**:
 - DTI [diffuse tensor imaging, https://www.diffusion-imaging.com/]
 - MRA [magnetic resonance angiography]
 
-**potential future topics**:
+**future topics**:
 - multi-modal studies [combining different data types; genetic, questionaire data, GWAS etc.]
 - neurodegenerative bases for disorders such as bipolar, schizophrenia [e.g. myelin sheath decay]
