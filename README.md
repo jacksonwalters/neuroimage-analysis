@@ -15,7 +15,7 @@ Then run
 
 `./ds000114-1.0.2.sh`
 
-to download the dataset which may take a few minutes. Any directory can be used, but be sure to set the path to the data files.
+to download the dataset which may take a few minutes.
 
 Currently the `ds000114_sub_01_analysis.m` script:
   - loads both functional (func) and anatomical data (anat)
