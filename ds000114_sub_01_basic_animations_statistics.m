@@ -1,6 +1,6 @@
 % === Set base path and data folder ===
 github_local_path = '/Users/jacksonwalters/Documents/GitHub/'; % local path for GitHub
-matlab_local_path = '/Users/jacksonwalters/Documents/MATLAB/'; % local path for MATLAB
+%matlab_local_path = '/Users/jacksonwalters/Documents/MATLAB/'; % local path for MATLAB
 github_repository_name = 'neuroimage-analysis'; %github repository name
 data_folder = 'ds000114-1.0.2'; %from the shell script
 sample_data_folder = 'sample_data';
@@ -95,15 +95,15 @@ function animateOverSlices(volume3Dor4D, timePoint, gifFile, delayTime)
 end
 
 % Animate over time (for fMRI)
-gif_time = fullfile(github_local_path, github_repository_path, 'animations/fmri_time_animation.gif');
+gif_time = fullfile(github_local_path, github_repository_name, 'animations/fmri_time_animation.gif');
 animateOverTime(funcData, 20, gif_time, 0.05);
 
 % Animate over slices (for fMRI at timepoint 100)
-gif_spatial = fullfile(github_local_path, github_repository_path, 'animations/fmri_spatial_animation.gif');
+gif_spatial = fullfile(github_local_path, github_repository_name, 'animations/fmri_spatial_animation.gif');
 animateOverSlices(funcData, 100, gif_spatial, 0.05);
 
 % Animate over slices (for anatomical data)
-gif_anat = fullfile(github_local_path, github_repository_path, 'animations/anat_spatial_animation.gif');
+gif_anat = fullfile(github_local_path, github_repository_name, 'animations/anat_spatial_animation.gif');
 animateOverSlices(anatData, 1, gif_anat, 0.05);  % anatData is 3D, timePoint ignored
 
 % create an image of a slice of anatomical data;
