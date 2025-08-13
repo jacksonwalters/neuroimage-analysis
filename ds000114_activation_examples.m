@@ -1,4 +1,4 @@
-%% ds000114_activation_examples.m
+%% ds000114_activation_examples_group.m
 % Task-based activation visualization for ds000114
 % ------------------------------
 clear; clc;
@@ -22,6 +22,11 @@ events = readtable(events_file, 'FileType', 'text', 'Delimiter', '\t');
 TR = 2.5; % seconds
 num_timepoints = 184; % for this task
 condition_names = unique(events.trial_type);
+num_conditions = length(condition_names);
+
+%% === Prepare group-average containers ===
+group_maps_sum = [];
+group_counts = 0;
 
 %% === Loop over subjects ===
 for subjNum = 1:10
@@ -38,13 +43,12 @@ for subjNum = 1:10
 
     bold_data = double(niftiread(func_file)); % X x Y x Z x T
     [X,Y,Z,T] = size(bold_data);
-    fprintf('Data size: [%d %d %d %d]\n', X,Y,Z,T);
 
-    % Preallocate mean activation maps
-    mean_maps = zeros(X,Y,Z,length(condition_names));
+    % Preallocate per-subject mean activation maps
+    mean_maps = zeros(X,Y,Z,num_conditions);
 
     % --- Loop over conditions ---
-    for c = 1:length(condition_names)
+    for c = 1:num_conditions
         cond = condition_names{c};
         onsets = events.onset(strcmp(events.trial_type, cond));
         durations = events.duration(strcmp(events.trial_type, cond));
@@ -65,7 +69,7 @@ for subjNum = 1:10
     zslice = round(Z/2);
     f = figure('Name', sprintf('%s - %s activation', subjID, task), 'Visible','off');
 
-    for c = 1:length(condition_names)
+    for c = 1:num_conditions
         subplot(2,2,c);
         imagesc(squeeze(mean_maps(:,:,zslice,c))');
         axis image off;
@@ -81,6 +85,33 @@ for subjNum = 1:10
     end
     saveas(f, fullfile(figFolder, sprintf('%s_task-%s_activation.png', subjID, task)));
     close(f);
+
+    %% --- Accumulate for group average ---
+    if isempty(group_maps_sum)
+        group_maps_sum = mean_maps;
+    else
+        group_maps_sum = group_maps_sum + mean_maps;
+    end
+    group_counts = group_counts + 1;
 end
 
-fprintf('✅ Activation maps computed and saved for all subjects.\n');
+%% === Compute group average maps ===
+if group_counts > 0
+    group_avg_maps = group_maps_sum / group_counts;
+    fprintf('\n✅ Group average computed over %d subjects.\n', group_counts);
+
+    %% --- Display group average for middle slice ---
+    f_group = figure('Name','Group average activation','Visible','off');
+    for c = 1:num_conditions
+        subplot(2,2,c);
+        imagesc(squeeze(group_avg_maps(:,:,zslice,c))');
+        axis image off;
+        colormap hot; colorbar;
+        title(condition_names{c});
+    end
+    sgtitle(sprintf('Group average activation (slice %d)', zslice));
+
+    %% --- Save group figure ---
+    saveas(f_group, fullfile(figFolder, sprintf('group_task-%s_activation.png', task)));
+    close(f_group);
+end
