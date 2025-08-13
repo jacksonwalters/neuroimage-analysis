@@ -3,6 +3,12 @@ github_local_path = '/Users/jacksonwalters/Documents/GitHub/neuroimage-analysis'
 data_folder = 'ds000114-1.0.2';
 full_data_path = fullfile(github_local_path, data_folder);
 
+% --- Preallocate accumulators ---
+FA_all = [];
+AD_all = [];
+RD_all = [];
+MD_all = [];
+
 % Loop over subjects
 for subjNum = 1:10
     subjID = sprintf('sub-%02d', subjNum);  % sub-01, sub-02, etc.
@@ -68,7 +74,13 @@ for subjNum = 1:10
         end
     end
 
-    % --- Save figure ---
+    % --- Accumulate for averaging ---
+    FA_all = cat(3, FA_all, FAmap);
+    AD_all = cat(3, AD_all, ADmap);
+    RD_all = cat(3, RD_all, RDmap);
+    MD_all = cat(3, MD_all, MDmap);
+
+    % --- Save figure for this subject ---
     figFolder = fullfile(github_local_path, 'figures', 'DTI_maps');
     if ~exist(figFolder, 'dir')
         mkdir(figFolder);
@@ -84,3 +96,25 @@ for subjNum = 1:10
     saveas(f, fullfile(figFolder, sprintf('%s_DTI_maps.png', subjID)));
     close(f);
 end
+
+% === Compute group averages ===
+FA_avg = mean(FA_all, 3, 'omitnan');
+AD_avg = mean(AD_all, 3, 'omitnan');
+RD_avg = mean(RD_all, 3, 'omitnan');
+MD_avg = mean(MD_all, 3, 'omitnan');
+
+% --- Save group average figure ---
+figFolder = fullfile(github_local_path, 'figures', 'DTI_group_average');
+if ~exist(figFolder, 'dir')
+    mkdir(figFolder);
+end
+
+f = figure;
+subplot(2,2,1); imagesc(FA_avg'); axis image off; colormap jet; colorbar; title('FA avg');
+subplot(2,2,2); imagesc(AD_avg'); axis image off; colormap jet; colorbar; title('AD avg');
+subplot(2,2,3); imagesc(RD_avg'); axis image off; colormap jet; colorbar; title('RD avg');
+subplot(2,2,4); imagesc(MD_avg'); axis image off; colormap jet; colorbar; title('MD avg');
+sgtitle('Group Average DTI metrics');
+
+saveas(f, fullfile(figFolder, 'DTI_group_average.png'));
+close(f);
