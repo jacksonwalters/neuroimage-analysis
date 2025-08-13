@@ -1,13 +1,11 @@
 % === Set base path and data folder ===
-github_local_path = '/Users/jacksonwalters/Documents/GitHub/'; % local path for GitHub
-github_repository_name = 'neuroimage-analysis'; %github repository name
-data_folder = 'ds000114-1.0.2'; %from the shell script
-sample_data_folder = 'sample_data';
+github_local_path = '/Users/jacksonwalters/Documents/GitHub/neuroimage-analysis'; % local path for GitHub with repository name
+data_folder = 'ds000114-1.0.2'; %data folder from the shell script
 
-%option 1: load sample data from data directory inside github repository
-local_data_path = fullfile(github_local_path,github_repository_name,sample_data_folder); %optional: full local data path
+%load sample data from data directory inside github repository
+full_data_path = fullfile(github_local_path,data_folder); %full local data path
 
-dwiFile = fullfile(github_local_path, github_repository_name, 'sample_data', 'sub-01_ses-retest_dwi.nii');
+dwiFile = fullfile(full_data_path, 'sub-01', 'ses-retest', 'dwi', 'sub-01_ses-retest_dwi.nii');
 dwiData = niftiread(dwiFile);    % size: X x Y x Z x Nvols
 dwiInfo = niftiinfo(dwiFile);
 
@@ -35,8 +33,8 @@ end
 
 dwiInfo % show the whole struct
 
-bvalFile = fullfile(github_local_path, github_repository_name, data_folder, 'dwi.bval');
-bvecFile = fullfile(github_local_path, github_repository_name, data_folder, 'dwi.bvec');
+bvalFile = fullfile(full_data_path, 'dwi.bval');
+bvecFile = fullfile(full_data_path, 'dwi.bvec');
 
 bvals = dlmread(bvalFile);   % 1 x N
 bvecs = dlmread(bvecFile);   % 3 x N
@@ -147,5 +145,5 @@ subplot(2,2,3); imagesc(RDmap'); axis image off; colormap jet; colorbar; title('
 subplot(2,2,4); imagesc(MDmap'); axis image off; colormap jet; colorbar; title('MD');
 sgtitle(sprintf('DTI metrics at slice %d', z));
 
-saveas(f, fullfile(github_local_path, github_repository_name, 'figures', 'DTI_maps.png'));
-%exportgraphics(f, fullfile(github_local_path, github_repository_name, 'DTI_maps.png'), 'Resolution',300);
+saveas(f, fullfile(github_local_path, 'figures', 'DTI_maps.png'));
+%exportgraphics(f, fullfile(github_local_path, 'DTI_maps.png'), 'Resolution',300);

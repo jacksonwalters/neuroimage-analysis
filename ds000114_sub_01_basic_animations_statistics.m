@@ -1,19 +1,11 @@
 % === Set base path and data folder ===
-github_local_path = '/Users/jacksonwalters/Documents/GitHub/'; % local path for GitHub
-%matlab_local_path = '/Users/jacksonwalters/Documents/MATLAB/'; % local path for MATLAB
-github_repository_name = 'neuroimage-analysis'; %github repository name
+github_local_path = '/Users/jacksonwalters/Documents/GitHub/neuroimage-analysis'; % local path for GitHub
 data_folder = 'ds000114-1.0.2'; %from the shell script
-sample_data_folder = 'sample_data';
-
-%option 1: load sample data from data directory inside github repository
-local_data_path = fullfile(github_local_path,github_repository_name,sample_data_folder); %optional: full local data path
-funcFile = fullfile(local_data_path, 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
-anatFile = fullfile(local_data_path, 'sub-01_ses-retest_T1w.nii');
 
 %option 2: build file path pointing to full dataset downloaded from the shell script
-full_data_path = fullfile(github_local_path, github_repository_name, data_folder);
-%funcFile = fullfile(full_data_path, 'sub-01', 'ses-retest', 'func', 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
-%anatFile = fullfile(full_data_path, 'sub-01', 'ses-retest', 'anat', 'sub-01_ses-retest_T1w.nii');
+full_data_path = fullfile(github_local_path, data_folder);
+funcFile = fullfile(full_data_path, 'sub-01', 'ses-retest', 'func', 'sub-01_ses-retest_task-fingerfootlips_bold.nii');
+anatFile = fullfile(full_data_path, 'sub-01', 'ses-retest', 'anat', 'sub-01_ses-retest_T1w.nii');
 
 %use niftiread to read in the 4d functional data
 funcData = niftiread(funcFile);  % 4D array
@@ -95,15 +87,15 @@ function animateOverSlices(volume3Dor4D, timePoint, gifFile, delayTime)
 end
 
 % Animate over time (for fMRI)
-gif_time = fullfile(github_local_path, github_repository_name, 'animations/fmri_time_animation.gif');
+gif_time = fullfile(github_local_path, 'animations/fmri_time_animation.gif');
 animateOverTime(funcData, 20, gif_time, 0.05);
 
 % Animate over slices (for fMRI at timepoint 100)
-gif_spatial = fullfile(github_local_path, github_repository_name, 'animations/fmri_spatial_animation.gif');
+gif_spatial = fullfile(github_local_path, 'animations/fmri_spatial_animation.gif');
 animateOverSlices(funcData, 100, gif_spatial, 0.05);
 
 % Animate over slices (for anatomical data)
-gif_anat = fullfile(github_local_path, github_repository_name, 'animations/anat_spatial_animation.gif');
+gif_anat = fullfile(github_local_path, 'animations/anat_spatial_animation.gif');
 animateOverSlices(anatData, 1, gif_anat, 0.05);  % anatData is 3D, timePoint ignored
 
 % create an image of a slice of anatomical data;
@@ -125,8 +117,3 @@ voxelTS = squeeze(funcData(x,y,z,:));
 plot(voxelTS);
 xlabel('Timepoint'); ylabel('Signal');
 title(sprintf('Voxel (%d,%d,%d)',x,y,z));
-
-%begin diffusion tensor imaging computation [AD, RD, MD, FA]
-dwiFile = fullfile(github_local_path, github_repository_name, 'sample_data', 'sub-01_ses-retest_dwi.nii');
-dwiData = niftiread(dwiFile);    % size: X x Y x Z x Nvols
-dwiInfo = niftiinfo(dwiFile);
