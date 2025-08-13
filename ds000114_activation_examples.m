@@ -1,17 +1,20 @@
-%% === Base paths ===
+% === Set base path and data folder ===
 github_local_path = '/Users/jacksonwalters/Documents/GitHub/neuroimage-analysis';
 data_folder = 'ds000114-1.0.2';
 full_data_path = fullfile(github_local_path, data_folder);
 
 %% --- Canonical HRF function ---
 function hrf = canonical_hrf(TR)
+    % Canonical HRF approximation (double gamma)
     dt = TR;
     t = 0:dt:32;  % time vector in seconds
 
-    peak1 = 6;       % main peak
-    undershoot = 16; % undershoot
-    p_u_ratio = 1/6; % ratio
+    % parameters from SPM canonical HRF
+    peak1 = 6;      % peak of main response
+    undershoot = 16; % peak of undershoot
+    p_u_ratio = 1/6; % ratio of undershoot to peak
 
+    % gamma pdfs
     h1 = (t.^(peak1-1) .* exp(-t)) / factorial(peak1-1);
     h2 = (t.^(undershoot-1) .* exp(-t)) / factorial(undershoot-1);
 
@@ -19,14 +22,14 @@ function hrf = canonical_hrf(TR)
     hrf = hrf / max(hrf); % normalize
 end
 
-%% --- Task and parameters ---
+%% --- Task and events ---
 task_name = 'task-fingerfootlips';
-TR = 2.5;            % seconds
+TR = 2.5;  % seconds
 subj_list = 1:10;
 
-all_beta_maps = [];  % accumulate for group average
+all_beta_maps = [];
 
-%% --- Loop over subjects ---
+% Loop over subjects
 for subjNum = subj_list
     subjID = sprintf('sub-%02d', subjNum);
     fprintf('\n=== Processing %s ===\n', subjID);
@@ -44,29 +47,32 @@ for subjNum = subj_list
     % --- Load events ---
     events_file = fullfile(full_data_path, sprintf('%s_events.tsv', task_name));
     if ~isfile(events_file)
-        warning('Events file not found for %s. Skipping...', subjID);
+        warning('Events file not found. Skipping %s...', subjID);
         continue;
     end
     events = readtable(events_file, 'FileType', 'text', 'Delimiter', '\t');
 
-    % --- Identify conditions ---
-    conditions = unique(events.trial_type);  % adjust column if necessary
-    nConditions = numel(conditions);
+    % --- Identify unique conditions ---
+    conditions = unique(events.trial_type);
+    nConditions = length(conditions);
+
+    % --- Build design matrix ---
     Xdesign = zeros(T, nConditions);
 
-    % --- HRF ---
-    hrf = canonical_hrf(TR);
+    hrf = canonical_hrf(TR);  % HRF vector
 
-    % --- Build design matrix per condition ---
     for c = 1:nConditions
-        idx = strcmp(events.trial_type, conditions{c});
         stim_vector = zeros(T,1);
-        for e = find(idx)'
-            onset_idx = round(events.onset(e)/TR) + 1;
-            duration_idx = round(events.duration(e)/TR);
-            stim_vector(onset_idx:min(onset_idx+duration_idx-1,T)) = 1;
+        cond_events = events(strcmp(events.trial_type, conditions{c}), :);
+
+        for e = 1:height(cond_events)
+            onset_idx = round(cond_events.onset(e)/TR) + 1;
+            duration_idx = round(cond_events.duration(e)/TR);
+            stim_vector(onset_idx:onset_idx+duration_idx-1) = 1;
         end
-        Xdesign(:,c) = conv(stim_vector, hrf, 'same');
+
+        % Convolve with HRF and truncate to original length
+        Xdesign(:,c) = conv(stim_vector, hrf, 'same');  
     end
 
     % Add intercept
@@ -74,50 +80,58 @@ for subjNum = subj_list
 
     % --- Fit GLM voxelwise ---
     beta_maps = zeros(X,Y,Z,nConditions);
+
     for x = 1:X
         for y = 1:Y
             for z = 1:Z
                 yvec = squeeze(bold_data(x,y,z,:));
                 if all(yvec==0), continue; end
-                b = Xdesign\yvec;  % least squares
+                b = Xdesign\yvec;
                 beta_maps(x,y,z,:) = b(1:nConditions);
             end
         end
     end
 
-    % --- Save as PNG images ---
+    % --- Save all condition slices in one figure ---
     subj_fig_folder = fullfile(github_local_path, 'figures', 'activation_maps');
     if ~exist(subj_fig_folder, 'dir')
         mkdir(subj_fig_folder);
     end
 
-    for c = 1:nConditions
-        f = figure('Visible','off');
-        slice = round(Z/2);  % middle slice
-        imagesc(beta_maps(:,:,slice,c)'); 
-        axis image off; 
-        colormap jet; 
-        colorbar; 
-        title(sprintf('%s - %s', subjID, conditions{c}));
-        saveas(f, fullfile(subj_fig_folder, sprintf('%s_%s_beta.png', subjID, conditions{c})));
-        close(f);
-    end
+    f = figure('Visible','off');
+    slice = round(Z/2);  % middle slice
 
-    % Accumulate for group average
-    all_beta_maps = cat(5, all_beta_maps, beta_maps);
+    for c = 1:nConditions
+        subplot(1,nConditions,c);
+        imagesc(beta_maps(:,:,slice,c)');
+        axis image off;
+        colormap jet;
+        colorbar;
+        title(conditions{c});
+    end
+    sgtitle(subjID);
+    saveas(f, fullfile(subj_fig_folder, sprintf('%s_all_conditions_beta.png', subjID)));
+    close(f);
+
+    all_beta_maps = cat(5, all_beta_maps, beta_maps);  % accumulate for group average
 end
 
 %% --- Group average ---
 group_avg = mean(all_beta_maps,5,'omitnan');
 
-for c = 1:nConditions
-    f = figure('Visible','off');
-    slice = round(Z/2);
-    imagesc(group_avg(:,:,slice,c)');
-    axis image off; colormap jet; colorbar;
-    title(sprintf('Group average - %s', conditions{c}));
-    saveas(f, fullfile(subj_fig_folder, sprintf('group_avg_%s_beta.png', conditions{c})));
-    close(f);
-end
+f = figure('Visible','off');
+slice = round(Z/2);
 
-fprintf('✅ All beta maps and group averages saved as PNGs.\n');
+for c = 1:nConditions
+    subplot(1,nConditions,c);
+    imagesc(group_avg(:,:,slice,c)');
+    axis image off;
+    colormap jet;
+    colorbar;
+    title(conditions{c});
+end
+sgtitle('Group average');
+saveas(f, fullfile(subj_fig_folder, 'group_avg_all_conditions_beta.png'));
+close(f);
+
+fprintf('✅ All subject and group average beta maps saved as PNGs.\n');
