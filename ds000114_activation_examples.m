@@ -1,117 +1,123 @@
-%% ds000114_activation_examples_group.m
-% Task-based activation visualization for ds000114
-% ------------------------------
-clear; clc;
-
-%% === Set base paths ===
+%% === Base paths ===
 github_local_path = '/Users/jacksonwalters/Documents/GitHub/neuroimage-analysis';
 data_folder = 'ds000114-1.0.2';
+full_data_path = fullfile(github_local_path, data_folder);
 
-%% === Task and event files ===
-task = 'fingerfootlips';
-events_file = fullfile(github_local_path, data_folder, ...
-    sprintf('task-%s_events.tsv', task));
+%% --- Canonical HRF function ---
+function hrf = canonical_hrf(TR)
+    dt = TR;
+    t = 0:dt:32;  % time vector in seconds
 
-if ~isfile(events_file)
-    error('Events file not found: %s', events_file);
+    peak1 = 6;       % main peak
+    undershoot = 16; % undershoot
+    p_u_ratio = 1/6; % ratio
+
+    h1 = (t.^(peak1-1) .* exp(-t)) / factorial(peak1-1);
+    h2 = (t.^(undershoot-1) .* exp(-t)) / factorial(undershoot-1);
+
+    hrf = h1 - p_u_ratio*h2;
+    hrf = hrf / max(hrf); % normalize
 end
 
-events = readtable(events_file, 'FileType', 'text', 'Delimiter', '\t');
+%% --- Task and parameters ---
+task_name = 'task-fingerfootlips';
+TR = 2.5;            % seconds
+subj_list = 1:10;
 
-%% === Parameters ===
-TR = 2.5; % seconds
-num_timepoints = 184; % for this task
-condition_names = unique(events.trial_type);
-num_conditions = length(condition_names);
+all_beta_maps = [];  % accumulate for group average
 
-%% === Prepare group-average containers ===
-group_maps_sum = [];
-group_counts = 0;
-
-%% === Loop over subjects ===
-for subjNum = 1:10
+%% --- Loop over subjects ---
+for subjNum = subj_list
     subjID = sprintf('sub-%02d', subjNum);
     fprintf('\n=== Processing %s ===\n', subjID);
 
-    func_file = fullfile(github_local_path, data_folder, subjID, ...
-        'ses-test', 'func', sprintf('%s_ses-test_task-%s_bold.nii', subjID, task));
-
+    % --- Load functional data ---
+    func_file = fullfile(full_data_path, subjID, 'ses-test', 'func', ...
+        sprintf('%s_ses-test_%s_bold.nii', subjID, task_name));
     if ~isfile(func_file)
         warning('Functional file not found for %s. Skipping...', subjID);
         continue;
     end
-
-    bold_data = double(niftiread(func_file)); % X x Y x Z x T
+    bold_data = double(niftiread(func_file));  % X x Y x Z x T
     [X,Y,Z,T] = size(bold_data);
 
-    % Preallocate per-subject mean activation maps
-    mean_maps = zeros(X,Y,Z,num_conditions);
+    % --- Load events ---
+    events_file = fullfile(full_data_path, sprintf('%s_events.tsv', task_name));
+    if ~isfile(events_file)
+        warning('Events file not found for %s. Skipping...', subjID);
+        continue;
+    end
+    events = readtable(events_file, 'FileType', 'text', 'Delimiter', '\t');
 
-    % --- Loop over conditions ---
-    for c = 1:num_conditions
-        cond = condition_names{c};
-        onsets = events.onset(strcmp(events.trial_type, cond));
-        durations = events.duration(strcmp(events.trial_type, cond));
+    % --- Identify conditions ---
+    conditions = unique(events.trial_type);  % adjust column if necessary
+    nConditions = numel(conditions);
+    Xdesign = zeros(T, nConditions);
 
-        % Compute which timepoints correspond to each event
-        time_idx = false(T,1);
-        for k = 1:length(onsets)
-            start_tp = max(1, round(onsets(k)/TR)+1);
-            end_tp   = min(T, round((onsets(k)+durations(k))/TR)+1);
-            time_idx(start_tp:end_tp) = true;
+    % --- HRF ---
+    hrf = canonical_hrf(TR);
+
+    % --- Build design matrix per condition ---
+    for c = 1:nConditions
+        idx = strcmp(events.trial_type, conditions{c});
+        stim_vector = zeros(T,1);
+        for e = find(idx)'
+            onset_idx = round(events.onset(e)/TR) + 1;
+            duration_idx = round(events.duration(e)/TR);
+            stim_vector(onset_idx:min(onset_idx+duration_idx-1,T)) = 1;
         end
-
-        % Average across selected timepoints
-        mean_maps(:,:,:,c) = mean(bold_data(:,:,:,time_idx), 4);
+        Xdesign(:,c) = conv(stim_vector, hrf, 'same');
     end
 
-    %% === Display middle slice for each condition ===
-    zslice = round(Z/2);
-    f = figure('Name', sprintf('%s - %s activation', subjID, task), 'Visible','off');
+    % Add intercept
+    Xdesign = [Xdesign, ones(T,1)];
 
-    for c = 1:num_conditions
-        subplot(2,2,c);
-        imagesc(squeeze(mean_maps(:,:,zslice,c))');
-        axis image off;
-        colormap hot; colorbar;
-        title(condition_names{c});
+    % --- Fit GLM voxelwise ---
+    beta_maps = zeros(X,Y,Z,nConditions);
+    for x = 1:X
+        for y = 1:Y
+            for z = 1:Z
+                yvec = squeeze(bold_data(x,y,z,:));
+                if all(yvec==0), continue; end
+                b = Xdesign\yvec;  % least squares
+                beta_maps(x,y,z,:) = b(1:nConditions);
+            end
+        end
     end
-    sgtitle(sprintf('%s - %s activation (slice %d)', subjID, task, zslice));
 
-    %% --- Save figure ---
-    figFolder = fullfile(github_local_path,'figures','activation_maps');
-    if ~exist(figFolder,'dir')
-        mkdir(figFolder);
+    % --- Save as PNG images ---
+    subj_fig_folder = fullfile(github_local_path, 'figures', 'activation_maps');
+    if ~exist(subj_fig_folder, 'dir')
+        mkdir(subj_fig_folder);
     end
-    saveas(f, fullfile(figFolder, sprintf('%s_task-%s_activation.png', subjID, task)));
+
+    for c = 1:nConditions
+        f = figure('Visible','off');
+        slice = round(Z/2);  % middle slice
+        imagesc(beta_maps(:,:,slice,c)'); 
+        axis image off; 
+        colormap jet; 
+        colorbar; 
+        title(sprintf('%s - %s', subjID, conditions{c}));
+        saveas(f, fullfile(subj_fig_folder, sprintf('%s_%s_beta.png', subjID, conditions{c})));
+        close(f);
+    end
+
+    % Accumulate for group average
+    all_beta_maps = cat(5, all_beta_maps, beta_maps);
+end
+
+%% --- Group average ---
+group_avg = mean(all_beta_maps,5,'omitnan');
+
+for c = 1:nConditions
+    f = figure('Visible','off');
+    slice = round(Z/2);
+    imagesc(group_avg(:,:,slice,c)');
+    axis image off; colormap jet; colorbar;
+    title(sprintf('Group average - %s', conditions{c}));
+    saveas(f, fullfile(subj_fig_folder, sprintf('group_avg_%s_beta.png', conditions{c})));
     close(f);
-
-    %% --- Accumulate for group average ---
-    if isempty(group_maps_sum)
-        group_maps_sum = mean_maps;
-    else
-        group_maps_sum = group_maps_sum + mean_maps;
-    end
-    group_counts = group_counts + 1;
 end
 
-%% === Compute group average maps ===
-if group_counts > 0
-    group_avg_maps = group_maps_sum / group_counts;
-    fprintf('\n✅ Group average computed over %d subjects.\n', group_counts);
-
-    %% --- Display group average for middle slice ---
-    f_group = figure('Name','Group average activation','Visible','off');
-    for c = 1:num_conditions
-        subplot(2,2,c);
-        imagesc(squeeze(group_avg_maps(:,:,zslice,c))');
-        axis image off;
-        colormap hot; colorbar;
-        title(condition_names{c});
-    end
-    sgtitle(sprintf('Group average activation (slice %d)', zslice));
-
-    %% --- Save group figure ---
-    saveas(f_group, fullfile(figFolder, sprintf('group_task-%s_activation.png', task)));
-    close(f_group);
-end
+fprintf('✅ All beta maps and group averages saved as PNGs.\n');
