@@ -39,10 +39,9 @@ to download the dataset which may take a few minutes.
 - fit voxelwise GLM to estimate beta maps for each condition
 - save PNGs showing all conditions for each subject and the group average
 
-**paths**: There are two paths depending on whether you'd like to use some sample data, or point to the full dataset.
+**paths**: Ensure your path is set appropriately (change the username). Place the data downloaded from the shell script in the GitHub repository root directory.
 
-- local test data path in repository: `'/Users/jacksonwalters/Documents/GitHub/neuroimage-analysis/sample_data'`
-- data downloaded from shell script: `'/Users/jacksonwalters/Documents/GitHub/neuroimage-analysis/ds000114-1.0.2'`
+- data downloaded from shell script: `'/Users/<your-username-here>/Documents/GitHub/neuroimage-analysis/ds000114-1.0.2'`
 
 **datasets:**
 - https://community.ukbiobank.ac.uk/hc/en-gb/articles/24618819821981-Imaging-Data
