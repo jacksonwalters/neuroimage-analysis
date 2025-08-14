@@ -1,5 +1,5 @@
 # neuroimage-analysis
-This script provides visualizations of brain scan data in MATLAB. This is joint work with Oriana Myers.
+These scripts provide visualizations of brain scan data in MATLAB.
 
 We analyze both fMRI [functional magnetic resonance imaging] data and utilize DTI [diffusion tensor imaging] methods.
 
@@ -18,22 +18,31 @@ Then run
 to download the dataset which may take a few minutes.
 
 **fMRI animations**: 
-  - script = `ds000114_sub_01_analysis.m`
+  - script = `ds000114_basic_animations_statistics.m`
   - loads both functional (func) and anatomical data (anat)
   - produces three animations as .gif files [temporal functional, spatial functional, spatial anatomical]
   - computes basic statistics
   - outputs a time series for a given voxel
 
-**DTI visualizations**: 
-- script = `ds000114_sub_01_dti_examples.m`
+**DTI visualizations**:
+- guide: https://www.diffusion-imaging.com/
+- script = `ds000114_dti_examples.m`
 - computes four DTI values [AD, RD, MD, FA] for fixed voxel in `ds000114-1.0.2`
 - computes [AD, RD, MD, FA] for across slices
 - displays and saves resulting 2d images
 
-**paths**: There are two paths depending on whether you'd like to use some sample data, or point to the full dataset.
+**activation examples**
+- script = `ds000114_activation_examples.m`
+- set paths for the dataset and GitHub project folder
+- define canonical HRF (double gamma) for modeling brain response
+- loop over subjects to load fMRI data and event timing
+- build design matrix by convolving condition onsets with HRF
+- fit voxelwise GLM to estimate beta maps for each condition
+- save PNGs showing all conditions for each subject and the group average
 
-- local test data path in repository: `'/Users/jacksonwalters/Documents/GitHub/neuroimage-analysis/sample_data'`
-- data downloaded from shell script: `'/Users/jacksonwalters/Documents/GitHub/neuroimage-analysis/ds000114-1.0.2'`
+**paths**: Ensure your path is set appropriately (change the username). Place the data downloaded from the shell script in the GitHub repository root directory.
+
+- data downloaded from shell script: `'/Users/<your-username-here>/Documents/GitHub/neuroimage-analysis/ds000114-1.0.2'`
 
 **datasets:**
 - https://community.ukbiobank.ac.uk/hc/en-gb/articles/24618819821981-Imaging-Data
@@ -41,7 +50,6 @@ to download the dataset which may take a few minutes.
 - https://openneuro.org
 
 **future brain imaging methods**:
-- DTI [diffuse tensor imaging, https://www.diffusion-imaging.com/]
 - MRA [magnetic resonance angiography]
 
 **future topics**:
