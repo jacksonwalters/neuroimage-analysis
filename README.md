@@ -18,14 +18,14 @@ Then run
 to download the dataset which may take a few minutes.
 
 **fMRI animations**: 
-  - script = `ds000114_sub_01_analysis.m`
+  - script = `ds000114_basic_animations_statistics.m`
   - loads both functional (func) and anatomical data (anat)
   - produces three animations as .gif files [temporal functional, spatial functional, spatial anatomical]
   - computes basic statistics
   - outputs a time series for a given voxel
 
 **DTI visualizations**: 
-- script = `ds000114_sub_01_dti_examples.m`
+- script = `ds000114_dti_examples.m`
 - computes four DTI values [AD, RD, MD, FA] for fixed voxel in `ds000114-1.0.2`
 - computes [AD, RD, MD, FA] for across slices
 - displays and saves resulting 2d images
