@@ -1,5 +1,5 @@
 # neuroimage-analysis
-This script provides visualizations of brain scan data in MATLAB.
+These scripts provide visualizations of brain scan data in MATLAB.
 
 We analyze both fMRI [functional magnetic resonance imaging] data and utilize DTI [diffusion tensor imaging] methods.
 
@@ -29,6 +29,15 @@ to download the dataset which may take a few minutes.
 - computes four DTI values [AD, RD, MD, FA] for fixed voxel in `ds000114-1.0.2`
 - computes [AD, RD, MD, FA] for across slices
 - displays and saves resulting 2d images
+
+**activation examples**
+- script = `ds000114_activation_examples.m`
+- set paths for the dataset and GitHub project folder
+- define canonical HRF (double gamma) for modeling brain response
+- loop over subjects to load fMRI data and event timing
+- build design matrix by convolving condition onsets with HRF
+- fit voxelwise GLM to estimate beta maps for each condition
+- save PNGs showing all conditions for each subject and the group average
 
 **paths**: There are two paths depending on whether you'd like to use some sample data, or point to the full dataset.
 
