@@ -24,7 +24,8 @@ to download the dataset which may take a few minutes.
   - computes basic statistics
   - outputs a time series for a given voxel
 
-**DTI visualizations**: 
+**DTI visualizations**:
+- guide: https://www.diffusion-imaging.com/
 - script = `ds000114_dti_examples.m`
 - computes four DTI values [AD, RD, MD, FA] for fixed voxel in `ds000114-1.0.2`
 - computes [AD, RD, MD, FA] for across slices
@@ -49,7 +50,6 @@ to download the dataset which may take a few minutes.
 - https://openneuro.org
 
 **future brain imaging methods**:
-- DTI [diffuse tensor imaging, https://www.diffusion-imaging.com/]
 - MRA [magnetic resonance angiography]
 
 **future topics**:
